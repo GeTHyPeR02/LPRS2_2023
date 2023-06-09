@@ -17,10 +17,10 @@ void setup(){
 void loop(){
     byte dataIn=0;
     digitalWrite(load, 1);
-    delay(200);
+    delay(100);
     digitalWrite(load, 0);
     digitalWrite(clockPulse, 0);
-    delay(200);
+    delay(100);
     digitalWrite(clockPulse, 1);
 
     for(int j=7; j>=0; j--){
@@ -40,7 +40,7 @@ void loop(){
     Serial.print("dataIN Bin:");
     Serial.println(dataIn, BIN);
     Serial.println();
-    delay(200);
+    delay(100);
     digitalWrite(clockPulse, 1);
     
     delay(2000);
