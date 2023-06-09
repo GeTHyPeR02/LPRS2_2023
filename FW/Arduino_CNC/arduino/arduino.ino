@@ -3,7 +3,7 @@ const int buttonPins[] = {2, 3, 4, 5};
 int buttonState[4];
 int buttonStatePrev[4];
 String mess[2][4]={{"PANJog_up=0", "PANJog_down=0", "PANJog_left=0", "PANJog_right=0"},
-                   {"PANJog_up=1", "PANJog_down=1", "PANJog_left=1", "PANJog_right=1"}};
+                   {"PANJog_up=1", "PANJog_down=1", "PANJog_left=1", "PANJog_right=1"}};//2,1 pozicija: "PANJog_up=1"
 
 void setup() {
   Serial.begin(115200); // Initialize serial communication for printing
