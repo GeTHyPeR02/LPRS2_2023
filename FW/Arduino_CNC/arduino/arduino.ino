@@ -1,25 +1,39 @@
-int load=2;
-int clockPulse=3;
-int dataOut=4;
-int r2=7;
-int r1=6;
-int r0=5;
-int previous_position[] = {0,0,0};
-int n_r0=8;
-int n_r1=9;
-int n_r2=10;
-int n_r3=11;
-int n_c0=A0; 
-int n_c1=A1;
-int n_c2=A2;
-int n_c3=A3;
-int n_c4=A4;
+//Pins for rotary switches
+int load=A0;
+int clockPulse=A1;
+int dataOut=A2;
+int r0=A3;
+int r1=A4;
+int r2=A5;
+int previous_position[] = {0,0,0}; //Previous position of rotary switches
+
+//Pins for buttons
+int n_r0=3;
+int n_r1=8;
+int n_r2=9;
+int n_r3=2;
+int n_c0=7;  
+int n_c1=10;
+int n_c2=4;
+int n_c3=5;
+int n_c4=6;
+
+int previous_matrix[4][5]={
+  {1,1,1,1,1},
+  {1,1,1,1,1},
+  {1,1,1,1,1},
+  {1,1,1,1,1}
+};
+
+//Messages to send via serial port when buttons is pressed
+const String messages[4][5]={
+  {"", "", "", "", ""},
+  {"PANForward=", "PANJog_up=", "", "", ""},
+  {"PANJog_left=", "PANJog_right=", "", "", ""},
+  {"PANBackward=", "PANJog_down=", "", "", ""}
+};
 
 uint16_t value;
-
-
-
-byte switchVar=0;
 
 void setup(){
   pinMode(load, OUTPUT);
@@ -43,25 +57,30 @@ void setup(){
 }
 
 void loop(){
-   /* pinMode(r2, OUTPUT);
+    //Open collector is used for reading buttons and rot switches
+    //Read rot sw 2
+    pinMode(r2, OUTPUT);
     digitalWrite(r2, 0);
     readF(2);
-   // delay(1000);
+
+    //Read rot sw 1
     pinMode(r2, INPUT);
     pinMode(r1, OUTPUT);
     digitalWrite(r2, 1);
     digitalWrite(r1, 0);
     readF(1);
-   // delay(1000);
+
+    //Read rot sw 0
     pinMode(r1, INPUT);
     pinMode(r0, OUTPUT);
     digitalWrite(r1, 1);
     digitalWrite(r0, 0);
-   // readF(0);
-   // delay(1000);
-    pinMode(r2, OUTPUT);
-    digitalWrite(r0, 1);*/
+    readF(0);
 
+    pinMode(r2, OUTPUT);
+    digitalWrite(r0, 1);
+
+    //Read buttons
     for(int i = 0; i < 4; i++){
        selectButton(i);
        delay(50);
@@ -95,47 +114,38 @@ void selectButton(int row){
       readButton(3);
       pinMode(n_r3, INPUT);
       break;
-    
   }
-
-
-  
 }
 
 void readButton(int row){
     int read_n_c0 = digitalRead(n_c0);
-    if(!read_n_c0){
-      Serial.print("Red:");
-      Serial.print(row);
-      Serial.println("     Kolona:0");
+    if(read_n_c0!=previous_matrix[row][0]){
+      Serial.println(messages[row][0]+previous_matrix[row][0]);
+      previous_matrix[row][0]=read_n_c0;
     }
     int read_n_c1 = digitalRead(n_c1);
-    if(!read_n_c1){
-      Serial.print("Red:");
-      Serial.print(row);
-      Serial.println("     Kolona:1");
+    if(read_n_c1!=previous_matrix[row][1]){
+      Serial.println(messages[row][1]+previous_matrix[row][1]);
+      previous_matrix[row][1]=read_n_c1;
     }
     int read_n_c2 = digitalRead(n_c2);
-    if(!read_n_c2){
-      Serial.print("Red:");
-      Serial.print(row);
-      Serial.println("     Kolona:2");
+    if(read_n_c2!=previous_matrix[row][2]){
+      Serial.println(messages[row][2]+previous_matrix[row][2]);
+      previous_matrix[row][2]=read_n_c2;
     }
     int read_n_c3 = digitalRead(n_c3);
-    if(!read_n_c3){
-      Serial.print("Red:");
-      Serial.print(row);
-      Serial.println("     Kolona:3");
+    if(read_n_c3!=previous_matrix[row][3]){
+      Serial.println(messages[row][3]+previous_matrix[row][3]);
+      previous_matrix[row][3]=read_n_c3;
     }
    int read_n_c4 = digitalRead(n_c4);
-    if(!read_n_c4){
-      Serial.print("Red:");
-      Serial.print(row);
-      Serial.println("     Kolona:4");
+    if(read_n_c4!=previous_matrix[row][4]){
+      Serial.println(messages[row][4]+previous_matrix[row][4]);
+      previous_matrix[row][4]=read_n_c4;
     }
-
 }
 
+//Read rot switches
 void readF(int sw){
     uint16_t dataIn=0;
     int position=-1;
@@ -151,15 +161,10 @@ void readF(int sw){
     
     delay(1);
    
- 
     for(int j=15; j>=0; j--){
       digitalWrite(clockPulse, 1);
       delay(1);
       value=digitalRead(dataOut);
-     // Serial.print("Button position:");
-     // Serial.println(j);
-     // Serial.print("Button value:");
-     // Serial.println(value);
       if(value){
         int a=(1 << j);
         
@@ -173,7 +178,6 @@ void readF(int sw){
        delay(1);
     }
  
-
     if(previous_position[sw] != position){
       if(sw == 1){
         if(previous_position[sw] < position){
@@ -191,8 +195,8 @@ void readF(int sw){
       previous_position[sw] = position;
     }
     delay(1);
+
     digitalWrite(clockPulse, 1);
     
     delay(100);
-
 }
