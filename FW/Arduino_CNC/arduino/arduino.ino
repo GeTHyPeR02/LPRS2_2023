@@ -5,7 +5,7 @@ int dataOut=A2;
 int r0=A3;
 int r1=A4;
 int r2=A5;
-int previous_position[] = {0,0,0}; //Previous position of rotary switches
+int previous_position[] = {-1,-1,-1}; //Previous position of rotary switches
 
 //Pins for buttons
 int n_r0=3;
@@ -53,34 +53,29 @@ void setup(){
   pinMode(n_c3, INPUT_PULLUP);
   pinMode(n_c4, INPUT_PULLUP); 
   
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop(){
-    //Open collector is used for reading buttons and rot switches
-    //Read rot sw 2
+  
     pinMode(r2, OUTPUT);
     digitalWrite(r2, 0);
     readF(2);
+   
 
-    //Read rot sw 1
-    pinMode(r2, INPUT);
+   pinMode(r2, INPUT);
     pinMode(r1, OUTPUT);
     digitalWrite(r2, 1);
     digitalWrite(r1, 0);
     readF(1);
-
-    //Read rot sw 0
     pinMode(r1, INPUT);
     pinMode(r0, OUTPUT);
     digitalWrite(r1, 1);
     digitalWrite(r0, 0);
     readF(0);
-
-    pinMode(r2, OUTPUT);
+    pinMode(r0, INPUT);
     digitalWrite(r0, 1);
 
-    //Read buttons
     for(int i = 0; i < 4; i++){
        selectButton(i);
        delay(50);
@@ -145,7 +140,6 @@ void readButton(int row){
     }
 }
 
-//Read rot switches
 void readF(int sw){
     uint16_t dataIn=0;
     int position=-1;
@@ -173,20 +167,23 @@ void readF(int sw){
       else{
            position=j;
       }
-      
+     
        digitalWrite(clockPulse, 0); 
        delay(1);
     }
- 
+ // Serial.println(dataIn, BIN);
+    if(previous_position[sw]==-1)
+      previous_position[sw]=position;
+    
     if(previous_position[sw] != position){
       if(sw == 1){
-        if(previous_position[sw] < position){
+        if(previous_position[sw] > position){
           Serial.println("PANJog_rate_next=1");
         }else{
           Serial.println("PANJog_rate_previous=1"); 
         }
       }else if(sw == 2){
-        if(previous_position[sw] < position){
+        if(previous_position[sw] > position){
           Serial.println("PANJog_feed_next=1");
         }else{
           Serial.println("PANJog_feed_previous=1"); 
@@ -198,5 +195,5 @@ void readF(int sw){
 
     digitalWrite(clockPulse, 1);
     
-    delay(100);
+    delay(25);
 }
