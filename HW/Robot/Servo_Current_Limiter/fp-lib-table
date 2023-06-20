@@ -1,4 +1,0 @@
-(fp_lib_table
-  (lib (name Extra_Common)(type KiCad)(uri ${KIPRJMOD}/../../../Common/HW/Extra_Common.pretty)(options "")(descr ""))
-  (lib (name For_Rasterboard)(type KiCad)(uri ${KIPRJMOD}/../../../Common/HW/For_Rasterboard.pretty)(options "")(descr ""))
-)

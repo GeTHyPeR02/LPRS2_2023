@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name "Servo_Current_Limiter-cache")(type "Legacy")(uri "${KIPRJMOD}/Servo_Current_Limiter-cache.lib")(options "")(descr ""))
-)
